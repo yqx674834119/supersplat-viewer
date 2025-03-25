@@ -4,20 +4,12 @@
         <title>SuperSplat Experience</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-        <base href="/s/">
+        <base href="/">
         <link rel="stylesheet" href="./index.css">
         <script type="importmap">
             {
                 "imports": {
-                    "playcanvas": "./playcanvas.mjs",
-                    "spline": "./spline.js",
-                    "picker": "./picker.js",
-                    "anim-camera": "./anim-camera.js",
-                    "fly-camera": "./fly-camera.js",
-                    "orbit-camera": "./orbit-camera.js",
-                    "input": "./input.js",
-                    "math": "./math.js",
-                    "data-migrations": "./data-migrations.js"
+                    "playcanvas": "https://cdn.jsdelivr.net/npm/playcanvas@2.6.1/build/playcanvas.mjs"
                 }
             }
         </script>
@@ -31,8 +23,8 @@
     </head>
     <body>
         <pc-app antialias="false" depth="false" high-resolution="true" stencil="false">
-            <pc-asset src="https://cdn.jsdelivr.net/npm/playcanvas@2.6.0/scripts/esm/xr-controllers.mjs"></pc-asset>
-            <pc-asset src="https://cdn.jsdelivr.net/npm/playcanvas@2.6.0/scripts/esm/xr-navigation.mjs"></pc-asset>
+            <pc-asset src="https://cdn.jsdelivr.net/npm/playcanvas@2.6.1/scripts/esm/xr-controllers.mjs"></pc-asset>
+            <pc-asset src="https://cdn.jsdelivr.net/npm/playcanvas@2.6.1/scripts/esm/xr-navigation.mjs"></pc-asset>
             <pc-asset id="ply" type="gsplat" lazy src="./scene.compressed.ply"></pc-asset>
             <pc-scene>
                 <!-- Camera (with XR support) -->

@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/playcanvas/supersplat-viewer#readme",
   "devDependencies": {
-    "rollup": "^4.37.0"
+    "rollup": "^4.37.0",
+    "rollup-plugin-copy": "^3.5.0"
   }
 }

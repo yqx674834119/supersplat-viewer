@@ -1,5 +1,5 @@
 import { Vec3 } from 'playcanvas';
-import { damp, MyQuat } from 'math';
+import { damp, MyQuat } from './math.js';
 
 const forward = new Vec3();
 const right = new Vec3();

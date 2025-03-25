@@ -1,11 +1,11 @@
 import { shaderChunks, Asset, BoundingBox, Color, EventHandler, Mat4, MiniStats, Vec3, Quat } from 'playcanvas';
-import { Picker } from 'picker';
-import { AnimCamera } from 'anim-camera';
-import { FlyCamera } from 'fly-camera';
-import { OrbitCamera } from 'orbit-camera';
-import { AppController } from 'input';
-import { lerp, MyQuat } from 'math';
-import { migrateSettings } from 'data-migrations';
+import { Picker } from './picker.js';
+import { AnimCamera } from './anim-camera.js';
+import { FlyCamera } from './fly-camera.js';
+import { OrbitCamera } from './orbit-camera.js';
+import { AppController } from './input.js';
+import { lerp, MyQuat } from './math.js';
+import { migrateSettings } from './data-migrations.js';
 
 const url = new URL(location.href);
 
