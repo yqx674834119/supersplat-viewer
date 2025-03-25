@@ -15,14 +15,14 @@ class Input {
     }
 
     update(dt) {
-        
+
     }
 
     clear() {
         this.value.fill(0);
         this.events.splice(0);
     }
-};
+}
 
 // additive input sums child inputs
 class AdditiveInput extends Input {
@@ -49,7 +49,7 @@ class AdditiveInput extends Input {
 
         this.inputs.forEach(input => input.clear());
     }
-};
+}
 
 // joystick sums input deltas based on stick position
 class Joystick extends Input {
@@ -64,7 +64,7 @@ class Joystick extends Input {
             value[i] += stick[i] * dt;
         }
     }
-};
+}
 
 // dampens a target value (usually a toggle value based on buttons) and maps it to a joystick axis
 class DampedJoystick extends Joystick {
@@ -84,7 +84,7 @@ class DampedJoystick extends Joystick {
         }
         super.update(dt);
     }
-};
+}
 
 // tracks a touch input and adds to the input value
 class TouchInput extends Input {
@@ -94,7 +94,7 @@ class TouchInput extends Input {
         this.prev = [0, 0, 0];
     }
 
-    down(id, x, y, z=0) {
+    down(id, x, y, z = 0) {
         const { prev } = this;
         this.id = id;
         prev[0] = x;
@@ -102,7 +102,7 @@ class TouchInput extends Input {
         prev[2] = z;
     }
 
-    move(x, y, z=0) {
+    move(x, y, z = 0) {
         const { value, prev } = this;
         value[0] += x - prev[0];
         value[1] += y - prev[1];
@@ -115,7 +115,7 @@ class TouchInput extends Input {
     up() {
         this.id = null;
     }
-};
+}
 
 // tracks a touch input and converts it to a joystick input
 class TouchJoystick extends Joystick {
@@ -125,7 +125,7 @@ class TouchJoystick extends Joystick {
         this.base = [0, 0, 0];
     }
 
-    down(id, x, y, z=0) {
+    down(id, x, y, z = 0) {
         const { base } = this;
         this.id = id;
         base[0] = x;
@@ -133,7 +133,7 @@ class TouchJoystick extends Joystick {
         base[2] = z;
     }
 
-    move(x, y, z=0) {
+    move(x, y, z = 0) {
         const { base, stick } = this;
         stick[0] = x - base[0];
         stick[1] = y - base[1];
@@ -147,7 +147,7 @@ class TouchJoystick extends Joystick {
         stick[1] = 0;
         stick[2] = 0;
     }
-};
+}
 
 // track two touch inputs and convert them into 2 inputs
 class TouchController {
@@ -193,7 +193,7 @@ class TouchController {
         this.left = left;
         this.right = right;
     }
-};
+}
 
 // track two touch inputs and convert into 3d input when both are active
 // x and y axis is two-touch translation
@@ -254,7 +254,7 @@ class TwoTouchInput extends Input {
         a.clear();
         b.clear();
     }
-};
+}
 
 class OrbitTouchController {
     constructor() {
@@ -296,7 +296,7 @@ class OrbitTouchController {
         this.left = twoTouch;
         this.right = first;
     }
-};
+}
 
 class MouseInput {
     constructor() {
@@ -306,14 +306,14 @@ class MouseInput {
         this.right = new Input();
     }
 
-    down(x, y, z=0) {
+    down(x, y, z = 0) {
         const { prev } = this;
         prev[0] = x;
         prev[1] = y;
         prev[2] = z;
     }
 
-    move(buttons, x, y, z=0) {
+    move(buttons, x, y, z = 0) {
         const { prev } = this;
         const dx = x - prev[0];
         const dy = y - prev[1];
@@ -337,7 +337,7 @@ class MouseInput {
         right.clear();
         middle.clear();
     }
-};
+}
 
 // keyboard and mouse controller
 class DesktopController {
@@ -365,7 +365,7 @@ class DesktopController {
             arrowleft: 'lookleft',
             arrowright: 'lookright',
             arrowup: 'lookup',
-            arrowdown: 'lookdown',
+            arrowdown: 'lookdown'
         };
 
         const mouseInput = new MouseInput();
@@ -394,7 +394,7 @@ class DesktopController {
             element.releasePointerCapture(event.pointerId);
         };
 
-        this.contextMenu = (event) => event.preventDefault();
+        this.contextMenu = event => event.preventDefault();
 
         const handleKey = (event, state) => {
 
@@ -433,12 +433,12 @@ class DesktopController {
                     case 'lookdown':
                         rightKeys.target[1] = (controls.lookup ? -s : 0) + (controls.lookdown ? s : 0);
                         break;
-                };
+                }
             }
         };
 
-        this.keyDown = (event) => handleKey(event, true);
-        this.keyUp = (event) => handleKey(event, false);
+        this.keyDown = event => handleKey(event, true);
+        this.keyUp = event => handleKey(event, false);
 
         this.left = left;
         this.right = right;
@@ -465,6 +465,6 @@ class AppController {
             this.right.clear();
         };
     }
-};
+}
 
 export { AppController };

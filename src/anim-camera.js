@@ -1,14 +1,18 @@
 import { Vec3 } from 'playcanvas';
-import { CubicSpline } from './spline.js';
+
 import { mod, MyQuat } from './math.js';
+import { CubicSpline } from './spline.js';
 
 const q = new MyQuat();
 
 // track an animation cursor with support for looping and ping-pong modes
 class AnimCursor {
     duration = 0;
+
     loopMode = 'none';
+
     timer = 0;
+
     cursor = 0;
 
     constructor(duration, loopMode) {
@@ -25,8 +29,8 @@ class AnimCursor {
         if (this.cursor >= this.duration) {
             switch (this.loopMode) {
                 case 'none': this.cursor = this.duration; break;
-                case 'repeat': this.cursor = this.cursor % this.duration; break;
-                case 'pingpong': this.cursor = this.cursor % (this.duration * 2); break;
+                case 'repeat': this.cursor %= this.duration; break;
+                case 'pingpong': this.cursor %= (this.duration * 2); break;
             }
         }
     }
@@ -38,25 +42,31 @@ class AnimCursor {
         this.cursor = 0;
     }
 
-    get value() {
-        return this.cursor > this.duration ? this.duration - this.cursor : this.cursor;
-    }
-
     set value(value) {
         this.cursor = mod(value, this.duration);
     }
-};
+
+    get value() {
+        return this.cursor > this.duration ? this.duration - this.cursor : this.cursor;
+    }
+}
 
 // Manage the state of a camera animation track
 class AnimCamera {
     spline;
+
     cursor = new AnimCursor();
+
     frameRate;
+
     result = [];
+
     position = new Vec3();
+
     target = new Vec3();
 
     rotateSpeed = 0.2;
+
     rotation = new Vec3();
 
     constructor(spline, duration, loopMode, frameRate) {
@@ -89,7 +99,7 @@ class AnimCamera {
                 rotation.set(0, 0, 0);
             } else {
                 rotation.x = Math.max(-90, Math.min(90, rotation.x - input.rotate.value[1] * rotateSpeed));
-                rotation.y = Math.max(-180, Math.min(180, rotation.y -input.rotate.value[0] * rotateSpeed));
+                rotation.y = Math.max(-180, Math.min(180, rotation.y - input.rotate.value[0] * rotateSpeed));
             }
         }
     }

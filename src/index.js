@@ -1,11 +1,12 @@
 import { shaderChunks, Asset, BoundingBox, Color, EventHandler, Mat4, MiniStats, Vec3, Quat } from 'playcanvas';
-import { Picker } from './picker.js';
+
 import { AnimCamera } from './anim-camera.js';
+import { migrateSettings } from './data-migrations.js';
 import { FlyCamera } from './fly-camera.js';
-import { OrbitCamera } from './orbit-camera.js';
 import { AppController } from './input.js';
 import { lerp, MyQuat } from './math.js';
-import { migrateSettings } from './data-migrations.js';
+import { OrbitCamera } from './orbit-camera.js';
+import { Picker } from './picker.js';
 
 const url = new URL(location.href);
 
@@ -128,7 +129,7 @@ class Pose {
         this.rotation.transformVector(Vec3.FORWARD, v);
         target.copy(v).mulScalar(this.distance).add(this.position);
     }
-};
+}
 
 class PointerDevice {
     constructor(element) {
@@ -150,9 +151,9 @@ class PointerDevice {
             this.target?.pointerUp?.(event, element);
         });
 
-        element.addEventListener('pointercancel', (event => {
+        element.addEventListener('pointercancel', (event) => {
             this.target?.pointerCancel?.(event, element);
-        }))
+        });
 
         element.addEventListener('contextmenu', (event) => {
             this.target?.contextMenu?.(event, element);
@@ -166,7 +167,7 @@ class PointerDevice {
             this.target?.keyUp?.(event, window);
         });
     }
-};
+}
 
 const pose = new Pose();
 
@@ -490,7 +491,7 @@ class Viewer {
             // use dt of 0 if animation is paused
             const dt = state.cameraMode === 'anim' ?
                 (state.animationPaused ? 0 : deltaTime * transitionTimer) :
-                    deltaTime;
+                deltaTime;
 
             const activeCamera = getCamera(state.cameraMode);
             activeCamera.update(dt, state.cameraMode !== 'anim' && input);
@@ -603,7 +604,7 @@ class Viewer {
 
 // displays a blurry poster image which resolves to sharp during loading
 const initPoster = (url, events) => {
-    const blur = (progress) => `blur(${Math.floor((100 - progress) * 0.4)}px)`;
+    const blur = progress => `blur(${Math.floor((100 - progress) * 0.4)}px)`;
 
     const element = document.getElementById('poster');
     element.style.backgroundImage = `url(${url})`;
@@ -617,7 +618,7 @@ const initPoster = (url, events) => {
     events.on('firstFrame', () => {
         element.style.display = 'none';
     });
-}
+};
 
 // On entering/exiting AR, we need to set the camera clear color to transparent black
 const initXr = (app, cameraElement, state, events) => {
@@ -738,6 +739,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Initialize XR support
     initXr(app, cameraElement, state, events);
 
+    // eslint-disable-next-line no-unused-vars
     const viewer = new Viewer(app, camera, events, state, settings);
 
     // wait for gsplat asset to load before initializing the rest
@@ -772,7 +774,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         'fly', 'orbit', 'cameraToggleHighlight',
         'high', 'low', 'qualityToggleHighlight',
         'reset', 'frame',
-        'loadingText','loadingBar',
+        'loadingText', 'loadingBar',
         'joystickBase', 'joystick'
     ].reduce((acc, id) => {
         acc[id] = document.getElementById(id);
@@ -783,7 +785,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     events.on('progress:changed', (progress) => {
         dom.loadingText.textContent = `${progress}%`;
         if (progress < 100) {
-            dom.loadingBar.style.backgroundImage = 'linear-gradient(90deg, #F60 0%, #F60 ' + progress + '%, white ' + progress + '%, white 100%)';
+            dom.loadingBar.style.backgroundImage = `linear-gradient(90deg, #F60 0%, #F60 ${progress}%, white ${progress}%, white 100%)`;
         } else {
             dom.loadingBar.style.backgroundImage = 'linear-gradient(90deg, #F60 0%, #F60 100%)';
         }
@@ -827,7 +829,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // toggle fullscreen when user switches between landscape portrait
     // orientation
-    screen?.orientation?.addEventListener("change", (event) => {
+    screen?.orientation?.addEventListener('change', (event) => {
         if (['landscape-primary', 'landscape-secondary'].includes(screen.orientation.type)) {
             requestFullscreen();
         } else {
@@ -851,7 +853,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const updateHQ = () => {
         dom.qualityToggleHighlight.classList[state.hqMode ? 'add' : 'remove']('right');
-    }
+    };
     events.on('hqMode:changed', (value) => {
         updateHQ();
     });
@@ -1026,9 +1028,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Camera mode UI
     const updateCameraMode = () => {
         if (state.cameraMode === 'fly') {
-            cameraToggleHighlight.classList.add('right');
+            dom.cameraToggleHighlight.classList.add('right');
         } else {
-            cameraToggleHighlight.classList.remove('right');
+            dom.cameraToggleHighlight.classList.remove('right');
         }
     };
     events.on('cameraMode:changed', updateCameraMode);

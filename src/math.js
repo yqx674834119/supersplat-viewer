@@ -82,7 +82,7 @@ class MyQuat extends Quat {
         array[offset + 2] = this.z;
         return array;
     }
-};
+}
 
 class SmoothDamp {
     constructor(value, smoothTime = 0.05) {
@@ -115,6 +115,6 @@ class SmoothDamp {
             value[i] = target[i] + (change + temp) * exp;
         }
     }
-};
+}
 
 export { lerp, damp, mod, MyQuat, SmoothDamp };

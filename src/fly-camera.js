@@ -1,4 +1,5 @@
 import { Vec3 } from 'playcanvas';
+
 import { damp, MyQuat } from './math.js';
 
 const forward = new Vec3();
@@ -9,15 +10,20 @@ const q = new MyQuat();
 
 class FlyCamera {
     position = new Vec3();
+
     rotation = new MyQuat();
+
     distance = 1;
+
     smoothPosition = new Vec3();
+
     smoothRotation = new MyQuat();
 
     moveSpeed = 0.1;
+
     rotateSpeed = 0.2;
 
-    reset(pose, snap=true) {
+    reset(pose, snap = true) {
         this.position.copy(pose.position);
         this.rotation.copy(pose.rotation);
         this.distance = pose.distance;
@@ -77,6 +83,6 @@ class FlyCamera {
         pose.rotation.copy(smoothRotation);
         pose.distance = distance;
     }
-};
+}
 
 export { FlyCamera };

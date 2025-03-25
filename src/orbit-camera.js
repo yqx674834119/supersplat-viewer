@@ -1,4 +1,5 @@
 import { Vec3 } from 'playcanvas';
+
 import { mod, MyQuat, SmoothDamp } from './math.js';
 
 const forward = new Vec3();
@@ -11,16 +12,20 @@ const radToDeg = 180 / Math.PI;
 
 class OrbitCamera {
     focus = new Vec3();
+
     rotation = new Vec3();
+
     distance = 1;
 
     smoothDamp = new SmoothDamp([0, 0, 0, 0, 0, 0, 1]);
 
     moveSpeed = 0.001;
+
     rotateSpeed = 0.16;
+
     distanceSpeed = 0.01;
 
-    reset(pose, snap=true) {
+    reset(pose, snap = true) {
         pose.rotation.transformVector(Vec3.FORWARD, v);
         v.normalize();
 
@@ -99,6 +104,6 @@ class OrbitCamera {
         v.mulScalar(-pose.distance);
         pose.position.fromArray(value).add(v);
     }
-};
+}
 
 export { OrbitCamera };

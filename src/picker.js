@@ -51,7 +51,7 @@ class Picker {
         camera.camera.projectionMatrix.clone().invert().transformVec4(pos, pos);
 
         // perform perspective divide
-        pos.mulScalar(1.0 / pos.w); 
+        pos.mulScalar(1.0 / pos.w);
 
         // view to world space
         const pos3 = new Vec3(pos.x, pos.y, pos.z);
