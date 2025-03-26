@@ -1,55 +1,33 @@
+import '@playcanvas/web-components';
 import { shaderChunks, Asset, BoundingBox, Color, EventHandler, Mat4, MiniStats, Vec3, Quat } from 'playcanvas';
+import { XrControllers } from 'playcanvas/scripts/esm/xr-controllers.mjs';
+import { XrNavigation } from 'playcanvas/scripts/esm/xr-navigation.mjs';
 
 import { AnimCamera } from './anim-camera.js';
 import { migrateSettings } from './data-migrations.js';
 import { FlyCamera } from './fly-camera.js';
 import { AppController } from './input.js';
-import { lerp, MyQuat } from './math.js';
+import { observe } from './observe.js';
 import { OrbitCamera } from './orbit-camera.js';
 import { Picker } from './picker.js';
+import { PointerDevice } from './pointer-device.js';
+import { Pose } from './pose.js';
 
-import * as webComponents from '@playcanvas/web-components';
-import { XrControllers } from 'playcanvas/scripts/esm/xr-controllers.mjs';
-import { XrNavigation } from 'playcanvas/scripts/esm/xr-navigation.mjs';
 
 const url = new URL(location.href);
 
 // support overriding parameters by query param
-const overrides = {};
-if (url.searchParams.has('noui')) overrides.noui = true;
-if (url.searchParams.has('noanim')) overrides.noanim = true;
-if (url.searchParams.has('poster')) overrides.posterUrl = url.searchParams.get('poster');
-if (url.searchParams.has('skybox')) overrides.skyboxUrl = url.searchParams.get('skybox');
-if (url.searchParams.has('ministats')) overrides.ministats = true;
+const paramOverrides = {};
+if (url.searchParams.has('noui')) paramOverrides.noui = true;
+if (url.searchParams.has('noanim')) paramOverrides.noanim = true;
+if (url.searchParams.has('poster')) paramOverrides.posterUrl = url.searchParams.get('poster');
+if (url.searchParams.has('skybox')) paramOverrides.skyboxUrl = url.searchParams.get('skybox');
+if (url.searchParams.has('ministats')) paramOverrides.ministats = true;
 
 // get experience parameters
 const params = {
     ...(window.sse?.params ?? {}),
-    ...overrides
-};
-
-// observe target properties and fire events when they change
-const observe = (events, target) => {
-    const members = new Set(Object.keys(target));
-
-    return new Proxy(target, {
-        set(target, property, value, receiver) {
-            // not allowed to set a new value on target
-            if (!members.has(property)) {
-                console.log('err');
-                return false;
-            }
-
-            // set and fire event if value changed
-            if (target[property] !== value) {
-                const prev = target[property];
-                target[property] = value;
-                events.fire(`${property}:changed`, value, prev);
-            }
-
-            return true;
-        }
-    });
+    ...paramOverrides
 };
 
 const gsplatFS = /* glsl */ `
@@ -96,83 +74,6 @@ void main(void) {
 shaderChunks.skyboxPS = shaderChunks.skyboxPS.replace('mapRoughnessUv(uv, mipLevel)', 'uv');
 
 const v = new Vec3();
-
-// stores a camera pose
-class Pose {
-    constructor(other) {
-        this.position = new Vec3();
-        this.rotation = new MyQuat();
-        this.distance = 1;
-        if (other) {
-            this.copy(other);
-        }
-    }
-
-    copy(pose) {
-        this.position.copy(pose.position);
-        this.rotation.copy(pose.rotation);
-        this.distance = pose.distance;
-        return this;
-    }
-
-    lerp(a, b, t) {
-        this.position.lerp(a.position, b.position, t);
-        this.rotation.lerp(a.rotation, b.rotation, t);
-        this.distance = lerp(a.distance, b.distance, t);
-        return this;
-    }
-
-    fromLookAt(position, target) {
-        this.position.copy(position);
-        this.rotation.fromLookAt(position, target);
-        this.distance = position.distance(target);
-        return this;
-    }
-
-    calcTarget(target) {
-        this.rotation.transformVector(Vec3.FORWARD, v);
-        target.copy(v).mulScalar(this.distance).add(this.position);
-    }
-}
-
-class PointerDevice {
-    constructor(element) {
-        this.target = null;
-
-        element.addEventListener('wheel', (event) => {
-            this.target?.wheel?.(event, element);
-        }, { passive: false });
-
-        element.addEventListener('pointerdown', (event) => {
-            this.target?.pointerDown?.(event, element);
-        });
-
-        element.addEventListener('pointermove', (event) => {
-            this.target?.pointerMove?.(event, element);
-        });
-
-        element.addEventListener('pointerup', (event) => {
-            this.target?.pointerUp?.(event, element);
-        });
-
-        element.addEventListener('pointercancel', (event) => {
-            this.target?.pointerCancel?.(event, element);
-        });
-
-        element.addEventListener('contextmenu', (event) => {
-            this.target?.contextMenu?.(event, element);
-        });
-
-        window.addEventListener('keydown', (event) => {
-            this.target?.keyDown?.(event, window);
-        });
-
-        window.addEventListener('keyup', (event) => {
-            this.target?.keyUp?.(event, window);
-        });
-    }
-}
-
 const pose = new Pose();
 
 class Viewer {
