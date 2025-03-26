@@ -6,25 +6,16 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
         <base href="/">
         <link rel="stylesheet" href="./index.css">
-        <script type="importmap">
-            {
-                "imports": {
-                    "playcanvas": "https://cdn.jsdelivr.net/npm/playcanvas@2.6.1/build/playcanvas.mjs"
-                }
-            }
-        </script>
-        <script type="module" src="https://cdn.jsdelivr.net/npm/@playcanvas/web-components@0.2.2/dist/pwc.mjs"></script>
         <script type="module">
             window.sse = {
                 settings: fetch("./settings.json").then(response => response.json()),
                 params: {}
             };
         </script>
+        <script type="module" src="./index.js"></script>
     </head>
     <body>
         <pc-app antialias="false" depth="false" high-resolution="true" stencil="false">
-            <pc-asset src="https://cdn.jsdelivr.net/npm/playcanvas@2.6.1/scripts/esm/xr-controllers.mjs"></pc-asset>
-            <pc-asset src="https://cdn.jsdelivr.net/npm/playcanvas@2.6.1/scripts/esm/xr-navigation.mjs"></pc-asset>
             <pc-asset id="ply" type="gsplat" lazy src="./scene.compressed.ply"></pc-asset>
             <pc-scene>
                 <!-- Camera (with XR support) -->
@@ -32,10 +23,7 @@
                     <pc-entity name="camera">
                         <pc-camera near-clip="0.001" far-clip="5000" horizontal-fov="true" tonemap="none"></pc-camera>
                     </pc-entity>
-                    <pc-scripts>
-                        <pc-script name="xrControllers"></pc-script>
-                        <pc-script name="xrNavigation"></pc-script>
-                    </pc-scripts>
+                    <pc-scripts></pc-scripts>
                 </pc-entity>
                 <!-- Light (for XR controllers) -->
                 <pc-entity name="light" rotation="35 45 0">
@@ -204,7 +192,5 @@
                 <div id="joystick"></div>
             </div>
         </div>
-
-        <script type="module" src="./index.js"></script>
     </body>
 </html>

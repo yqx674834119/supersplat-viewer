@@ -8,6 +8,10 @@ import { lerp, MyQuat } from './math.js';
 import { OrbitCamera } from './orbit-camera.js';
 import { Picker } from './picker.js';
 
+import * as webComponents from '@playcanvas/web-components';
+import { XrControllers } from 'playcanvas/scripts/esm/xr-controllers.mjs';
+import { XrNavigation } from 'playcanvas/scripts/esm/xr-navigation.mjs';
+
 const url = new URL(location.href);
 
 // support overriding parameters by query param
@@ -18,7 +22,7 @@ if (url.searchParams.has('poster')) overrides.posterUrl = url.searchParams.get('
 if (url.searchParams.has('skybox')) overrides.skyboxUrl = url.searchParams.get('skybox');
 if (url.searchParams.has('ministats')) overrides.ministats = true;
 
-// get query parameters
+// get experience parameters
 const params = {
     ...(window.sse?.params ?? {}),
     ...overrides
@@ -635,6 +639,9 @@ const initXr = (app, cameraElement, state, events) => {
         const parentRotation = new Quat();
         const cameraPosition = new Vec3();
         const cameraRotation = new Quat();
+
+        parent.script.create(XrControllers);
+        parent.script.create(XrNavigation);
 
         app.xr.on('start', () => {
             app.autoRender = true;

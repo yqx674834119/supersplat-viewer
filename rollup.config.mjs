@@ -1,3 +1,4 @@
+import resolve from '@rollup/plugin-node-resolve';
 import copy from 'rollup-plugin-copy';
 
 export default [{
@@ -7,6 +8,7 @@ export default [{
         format: 'esm'
     },
     plugins: [
+        resolve(),
         copy({
             targets: [
                 { src: 'src/index.html', dest: 'dist' },
