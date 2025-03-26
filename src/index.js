@@ -185,7 +185,6 @@ class Viewer {
         this.events = events;
         this.state = state;
         this.settings = settings;
-        this.gsplat = app.root.findComponent('gsplat');
 
         // disable auto render, we'll render only when camera changes
         app.autoRender = false;
@@ -249,7 +248,10 @@ class Viewer {
 
     // initialize the viewer once gsplat asset is finished loading (so we know its bound etc)
     initialize() {
-        const { app, entity, events, state, settings, gsplat } = this;
+        const { app, entity, events, state, settings } = this;
+
+        // get the gsplat
+        const gsplat = app.root.findComponent('gsplat');
 
         // calculate scene bounding box
         const bbox = gsplat?.instance?.meshInstance?.aabb ?? new BoundingBox();
@@ -692,8 +694,34 @@ const initXr = (app, cameraElement, state, events) => {
     }
 };
 
+const loadContent = (appElement) => {
+    const { app } = appElement;
+    const { contentUrl } = window.sse;
+
+    const asset = new Asset('scene.compressed.ply', 'gsplat', {
+        url: contentUrl,
+        filename: 'scene.compressed.ply'
+    });
+
+    asset.on('load', () => {
+        const entity = asset.resource.instantiate();
+        app.root.addChild(entity);
+    });
+
+    asset.on('error', (err) => {
+        console.log(err);
+    });
+
+    app.assets.add(asset);
+    app.assets.load(asset);
+};
+
 document.addEventListener('DOMContentLoaded', async () => {
-    const app = (await document.querySelector('pc-app').ready()).app;
+    const appElement = document.querySelector('pc-app');
+
+    loadContent(appElement);
+
+    const app = (await appElement.ready()).app;
     const cameraElement = await document.querySelector('pc-entity[name="camera"]').ready();
     const camera = cameraElement.entity;
     const settings = migrateSettings(await window.sse?.settings);
@@ -738,6 +766,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         app.assets.load(skyAsset);
     }
 
+    // construct ministats
     if (params.ministats) {
         const miniStats = new MiniStats(app);
         miniStats.position = 'topright';
