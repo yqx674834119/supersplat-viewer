@@ -2,9 +2,13 @@
 
 This is the official viewer for https://superspl.at and the SuperSplat Editor HTML export.
 
-This webapp compiles to simple static html site.
+This webapp compiles to simple, self-contained, static website.
 
 The app supports a few useful URL parameters (though please note these are subject to change):
+- `&settings=url` - specify the URL of the settings.json file (default is `./settings.json`
+- `&content=url` - specify the URL of the scene.compressed.ply file (default is `./scene.compressed.ply`)
+
+As well as the following:
 - `&noui` - hide UI
 - `&noanim` - start with animation paused
 - `&poster=url` - show an image while loading the scene content
