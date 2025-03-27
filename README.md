@@ -1,6 +1,15 @@
-# SuperSplat Viewer - 3D Gaussian Splat Viewer
+# SuperSplat Viewer
 
-SuperSplat Viewer is the 3d application powering https://superspl.at.
+This is the official viewer for https://superspl.at and powers the experience there as well the HTML viewer export from SuperSplat Editor.
+
+This webapp compiles to simple static html site.
+
+It supports a few useful URL parameters (though please note these are subject to change):
+- `&noui` - hide UI
+- `&noanim` - start with animation paused
+- `&poster=url` - show an image while loading the scene content
+- `&ministats` - show the runtime CPU (and on desktop, GPU) performance graphs
+- `&skybox=url` - specify an equirectangular skybox image for the skybox
 
 ## Local Development
 
