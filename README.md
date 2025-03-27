@@ -1,10 +1,10 @@
 # SuperSplat Viewer
 
-This is the official viewer for https://superspl.at and powers the experience there as well the HTML viewer export from SuperSplat Editor.
+This is the official viewer for https://superspl.at and the SuperSplat Editor HTML export.
 
 This webapp compiles to simple static html site.
 
-It supports a few useful URL parameters (though please note these are subject to change):
+The app supports a few useful URL parameters (though please note these are subject to change):
 - `&noui` - hide UI
 - `&noanim` - start with animation paused
 - `&poster=url` - show an image while loading the scene content
