@@ -38,7 +38,7 @@ To initialize a local development environment for SuperSplat Viewer, ensure you 
    npm run develop
    ```
 
-4. Open the browser at http://localhost:3000. By default the viewer loads ./settings.json and ./scene.compressed.ply, but these can be overridden with `?settings=url&content=url`.
+4. Open the browser at http://localhost:3000.
 
 ## Notes
 - We plan to convert the source to typescript
