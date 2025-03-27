@@ -5,8 +5,8 @@ This is the official viewer for https://superspl.at and the SuperSplat Editor HT
 This webapp compiles to simple, self-contained, static website.
 
 The app supports a few useful URL parameters (though please note these are subject to change):
-- `&settings=url` - specify the URL of the settings.json file (default is `./settings.json`
-- `&content=url` - specify the URL of the scene.compressed.ply file (default is `./scene.compressed.ply`)
+- `&settings=url` - specify the URL of the `settings.json` file (default is `./settings.json`)
+- `&content=url` - specify the URL of the `scene.compressed.ply` file (default is `./scene.compressed.ply`)
 
 As well as the following:
 - `&noui` - hide UI
@@ -39,3 +39,6 @@ To initialize a local development environment for SuperSplat Viewer, ensure you 
    ```
 
 4. Open the browser at http://localhost:3000. By default the viewer loads ./settings.json and ./scene.compressed.ply, but these can be overridden with `?settings=url&content=url`.
+
+## Notes
+- We plan to convert the source to typescript
