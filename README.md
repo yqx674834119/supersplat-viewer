@@ -39,6 +39,42 @@ To initialize a local development environment for SuperSplat Viewer, ensure you 
    ```
 
 4. Open the browser at http://localhost:3000.
+## Settings Schema
+
+The `settings.json` file has the following schema (as defined in typescript, taken from SuperSplat editor):
+
+
+```typescript
+type AnimTrack = {
+    name: string,
+    duration: number,
+    frameRate: number,
+    target: 'camera',
+    loopMode: 'none' | 'repeat' | 'pingpong',
+    interpolation: 'step' | 'spline',
+    keyframes: {
+        times: number[],
+        values: {
+            position: number[],
+            target: number[],
+        }
+    }
+};
+
+type ExperienceSettings = {
+    camera: {
+        fov?: number,
+        position?: number[],
+        target?: number[],
+        startAnim: 'none' | 'orbit' | 'animTrack',
+        animTrack: string
+    },
+    background: {
+        color?: number[]
+    },
+    animTracks: AnimTrack[]
+};
+```
 
 ## Notes
 - We plan to convert the source to typescript
