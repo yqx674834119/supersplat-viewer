@@ -2,6 +2,8 @@
 
 This is the official viewer for https://superspl.at and the SuperSplat Editor HTML export.
 
+<img width="1088" alt="Screenshot 2025-04-11 at 13 36 02" src="https://github.com/user-attachments/assets/a5e2a2eb-3064-4d73-beb9-eb9c4708b2b2" />
+
 This webapp compiles to simple, self-contained, static website.
 
 The app supports a few useful URL parameters (though please note these are subject to change):
