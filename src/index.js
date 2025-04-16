@@ -534,8 +534,8 @@ const initXr = (app, cameraElement, state, events) => {
     app.xr.on('available:immersive-ar', (available) => {
         state.hasAR = available;
     });
-    app.xr.on('available:immersize-vr', (available) => {
-        state.hasXR = available;
+    app.xr.on('available:immersive-vr', (available) => {
+        state.hasVR = available;
     });
 
     const parent = cameraElement.parentElement.entity;
