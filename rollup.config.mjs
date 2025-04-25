@@ -11,10 +11,16 @@ export default [{
     plugins: [
         resolve(),
         copy({
-            targets: [
-                { src: 'src/index.html', dest: 'dist' },
-                { src: 'src/index.css', dest: 'dist' }
-            ]
+            targets: [{
+                src: 'src/index.html',
+                dest: 'dist',
+                transform: (contents) => {
+                    return contents.toString().replace('<base href="">', `<base href="${process.env.BASE_HREF ?? ''}">`);
+                }
+            }, {
+                src: 'src/index.css',
+                dest: 'dist'
+            }]
         })
     ]
 }];
