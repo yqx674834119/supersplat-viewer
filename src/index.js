@@ -13,22 +13,8 @@ import { Picker } from './picker.js';
 import { PointerDevice } from './pointer-device.js';
 import { Pose } from './pose.js';
 
-
-const url = new URL(location.href);
-
-// support overriding parameters by query param
-const paramOverrides = {};
-if (url.searchParams.has('noui')) paramOverrides.noui = true;
-if (url.searchParams.has('noanim')) paramOverrides.noanim = true;
-if (url.searchParams.has('poster')) paramOverrides.posterUrl = url.searchParams.get('poster');
-if (url.searchParams.has('skybox')) paramOverrides.skyboxUrl = url.searchParams.get('skybox');
-if (url.searchParams.has('ministats')) paramOverrides.ministats = true;
-
 // get experience parameters
-const params = {
-    ...(window.sse?.params ?? {}),
-    ...paramOverrides
-};
+const params = window.sse?.params ?? {};
 
 const gsplatFS = /* glsl */ `
 
@@ -510,13 +496,9 @@ class Viewer {
 }
 
 // displays a blurry poster image which resolves to sharp during loading
-const initPoster = (url, events) => {
+const initPoster = (events) => {
     const blur = progress => `blur(${Math.floor((100 - progress) * 0.4)}px)`;
-
     const element = document.getElementById('poster');
-    element.style.backgroundImage = `url(${url})`;
-    element.style.display = 'block';
-    element.style.filter = blur(0);
 
     events.on('progress:changed', (progress) => {
         element.style.filter = blur(progress);
@@ -650,8 +632,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // Initialize the load-time poster
-    if (params.posterUrl) {
-        initPoster(params.posterUrl, events);
+    if (window.sse?.poster) {
+        initPoster(events);
     }
 
     // Initialize skybox
