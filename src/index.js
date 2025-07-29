@@ -43,13 +43,8 @@ const initPoster = (events) => {
     const element = document.getElementById('poster');
     const blur = progress => `blur(${Math.floor((100 - progress) * 0.4)}px)`;
 
-    let watermark = 0;
-
     events.on('progress:changed', (progress) => {
-        if (progress > watermark) {
-            watermark = progress;
-            element.style.filter = blur(progress);
-        }
+        element.style.filter = blur(progress);
     });
 
     events.on('firstFrame', () => {
@@ -163,8 +158,14 @@ const waitForGsplat = (app, state) => {
         if (assets.length > 0) {
             const asset = assets[0];
 
+            let watermark = 0;
+
             asset.on('progress', (received, length) => {
-                state.progress = (Math.min(1, received / length) * 100).toFixed(0);
+                const progress = Math.min(1, received / length) * 100;
+                if (progress > watermark) {
+                    watermark = progress;
+                    state.progress = watermark.toFixed(0);
+                }
             });
 
             if (asset.loaded) {
