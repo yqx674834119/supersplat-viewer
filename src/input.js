@@ -14,6 +14,9 @@ import {
 const tmpV1 = new Vec3();
 const tmpV2 = new Vec3();
 
+// sensitivity tweak for input touch devices
+const touchSensitivity = 0.5;
+
 /**
  * Converts screen space mouse deltas to world space pan vector.
  *
@@ -192,6 +195,7 @@ class AppController {
         v.add(flyMove.mulScalar(fly * this.moveSpeed * dt));
         const pinchMove = new Vec3(0, 0, pinch[0]);
         v.add(pinchMove.mulScalar(orbit * pan * this.pinchSpeed * dt));
+        v.mulScalar(touchSensitivity);
         deltas.move.append([v.x, v.y, v.z]);
 
         // mobile rotate
@@ -200,6 +204,7 @@ class AppController {
         v.add(orbitRotate.mulScalar(orbit * (1 - pan) * this.orbitSpeed * dt));
         const flyRotate = new Vec3(rightInput[0], rightInput[1], 0);
         v.add(flyRotate.mulScalar(fly * this.orbitSpeed * dt));
+        v.mulScalar(touchSensitivity);
         deltas.rotate.append([v.x, v.y, v.z]);
 
         // gamepad move
