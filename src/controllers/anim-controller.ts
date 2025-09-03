@@ -1,25 +1,39 @@
-import { InputController, Vec3 } from 'playcanvas';
+import { InputController, Vec3, type InputFrame } from 'playcanvas';
 
-import { mod } from '../core/math.js';
-import { CubicSpline } from '../core/spline.js';
+import { mod } from '../core/math';
+import { CubicSpline } from '../core/spline';
 
-/** @import { InputFrame, Pose } from 'playcanvas' */
+export type AnimTrack = {
+    name: string;
+    keyframes: {
+        times: number[];
+        values: {
+            position: number[];
+            target: number[];
+        };
+    };
+    duration: number;
+    frameRate: number;
+    target: 'camera';
+    interpolation: 'spline';
+    loopMode: 'none' | 'repeat' | 'pingpong';
+}
 
 // track an animation cursor with support for looping and ping-pong modes
 class AnimCursor {
-    duration = 0;
+    duration: number = 0;
 
-    loopMode = 'none';
+    loopMode: 'none' | 'repeat' | 'pingpong' = 'none';
 
-    timer = 0;
+    timer: number = 0;
 
-    cursor = 0;
+    cursor: number = 0;
 
-    constructor(duration, loopMode) {
+    constructor(duration: number, loopMode: 'none' | 'repeat' | 'pingpong') {
         this.reset(duration, loopMode);
     }
 
-    update(deltaTime) {
+    update(deltaTime: number) {
         // update animation timer
         this.timer += deltaTime;
 
@@ -35,14 +49,14 @@ class AnimCursor {
         }
     }
 
-    reset(duration, loopMode) {
+    reset(duration: number, loopMode: 'none' | 'repeat' | 'pingpong') {
         this.duration = duration;
         this.loopMode = loopMode;
         this.timer = 0;
         this.cursor = 0;
     }
 
-    set value(value) {
+    set value(value: number) {
         this.cursor = mod(value, this.duration);
     }
 
@@ -53,19 +67,19 @@ class AnimCursor {
 
 // Manage the state of a camera animation track
 class AnimController extends InputController {
-    spline;
+    spline: CubicSpline;
 
-    cursor = new AnimCursor();
+    cursor: AnimCursor = new AnimCursor(0, 'none');
 
-    frameRate;
+    frameRate: number;
 
-    result = [];
+    result: number[] = [];
 
-    position = new Vec3();
+    position: Vec3 = new Vec3();
 
-    target = new Vec3();
+    target: Vec3 = new Vec3();
 
-    constructor(spline, duration, loopMode, frameRate) {
+    constructor(spline: CubicSpline, duration: number, loopMode: 'none' | 'repeat' | 'pingpong', frameRate: number) {
         super();
         this.spline = spline;
         this.cursor.reset(duration, loopMode);
@@ -73,11 +87,11 @@ class AnimController extends InputController {
     }
 
     /**
-     * @param {InputFrame<{ move: number[], rotate: number[] }>} frame - The input frame.
-     * @param {number} dt - The delta time.
-     * @returns {Pose} - The controller pose.
+     * @param frame - The input frame.
+     * @param dt - The delta time.
+     * @returns - The controller pose.
      */
-    update(frame, dt) {
+    update(frame: InputFrame<{ move: number[], rotate: number[] }>, dt: number) {
         // discard frame
         frame.read();
 
@@ -99,7 +113,7 @@ class AnimController extends InputController {
     }
 
     // construct an animation from a settings track
-    static fromTrack(track) {
+    static fromTrack(track: AnimTrack) {
         const { keyframes, duration, frameRate, loopMode } = track;
         const { times, values } = keyframes;
         const { position, target } = values;

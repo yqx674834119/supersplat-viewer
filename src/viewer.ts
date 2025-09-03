@@ -8,28 +8,28 @@ import {
     Vec2,
     Vec3
 } from 'playcanvas';
+import type { AppBase, Entity, EventHandler, GSplatComponent, InputController } from 'playcanvas';
 
-import { AnimController } from './controllers/anim-controller.js';
-import { easeOut } from './core/math.js';
-import { AppController } from './input.js';
-import { Picker } from './picker.js';
+import { AnimController, AnimTrack } from './controllers/anim-controller';
+import { easeOut } from './core/math';
+import { AppController } from './input';
+import { Picker } from './picker';
 
-/** @import { InputController } from 'playcanvas' */
 
 const pose = new Pose();
 
 /**
  * Creates a rotation animation track
  *
- * @param {Pose} initial - The initial pose of the camera.
- * @param {number} [keys] - The number of keys in the animation.
- * @param {number} [duration] - The duration of the animation in seconds.
- * @returns {object} - The animation track object containing position and target keyframes.
+ * @param initial - The initial pose of the camera.
+ * @param keys - The number of keys in the animation.
+ * @param duration - The duration of the animation in seconds.
+ * @returns - The animation track object containing position and target keyframes.
  */
-const createRotateTrack = (initial, keys = 12, duration = 20) => {
+const createRotateTrack = (initial: Pose, keys: number = 12, duration: number = 20): AnimTrack => {
     const times = new Array(keys).fill(0).map((_, i) => i / keys * duration);
-    const position = [];
-    const target = [];
+    const position: number[] = [];
+    const target: number[] = [];
 
     const initialTarget = new Vec3();
     initial.getFocus(initialTarget);
@@ -73,7 +73,17 @@ const createRotateTrack = (initial, keys = 12, duration = 20) => {
 };
 
 class Viewer {
-    constructor(app, entity, events, state, settings, params) {
+    app: AppBase;
+
+    entity: Entity;
+
+    events: EventHandler;
+
+    state: any;
+
+    settings: any;
+
+    constructor(app: AppBase, entity: Entity, events: EventHandler, state: any, settings: any, params: any) {
         const { background, camera } = settings;
         const { graphicsDevice } = app;
 
@@ -107,7 +117,7 @@ class Viewer {
         app.on('framerender', () => {
             const world = this.entity.getWorldTransform();
             const proj = this.entity.camera.projectionMatrix;
-            const nearlyEquals = (a, b, epsilon = 1e-4) => {
+            const nearlyEquals = (a: Float32Array<ArrayBufferLike>, b: Float32Array<ArrayBufferLike>, epsilon = 1e-4) => {
                 return !a.some((v, i) => Math.abs(v - b[i]) >= epsilon);
             };
 
@@ -145,7 +155,7 @@ class Viewer {
         const { app, entity, events, state, settings } = this;
 
         // get the gsplat
-        const gsplat = app.root.findComponent('gsplat');
+        const gsplat = app.root.findComponent('gsplat') as GSplatComponent;
 
         // calculate scene bounding box
         const bbox = gsplat?.instance?.meshInstance?.aabb ?? new BoundingBox();
@@ -184,7 +194,7 @@ class Viewer {
 
             // extract the camera animation track from settings
             if (animTracks?.length > 0 && camera.startAnim === 'animTrack') {
-                const track = animTracks.find(track => track.name === camera.animTrack);
+                const track = animTracks.find((track: AnimTrack) => track.name === camera.animTrack);
                 if (track) {
                     return AnimController.fromTrack(track);
                 }
@@ -215,11 +225,7 @@ class Viewer {
             return flyCamera;
         })();
 
-        /**
-         * @param {'orbit' | 'anim' | 'fly'} cameraMode - the camera mode to get
-         * @returns {InputController} the camera instance for the given mode
-         */
-        const getCamera = (cameraMode) => {
+        const getCamera = (cameraMode: 'orbit' | 'anim' | 'fly'): InputController => {
             switch (cameraMode) {
                 case 'orbit': return orbitCamera;
                 case 'anim': return animCamera;
@@ -260,12 +266,12 @@ class Viewer {
 
         // the previous camera we're transitioning away from
         const prevPose = new Pose();
-        let prevCamera = null;
+        let prevCamera: InputController | null = null;
         let prevCameraMode = 'orbit';
 
         // handle input events
         events.on('inputEvent', (eventName, event) => {
-            const doReset = (pose) => {
+            const doReset = (pose: Pose) => {
                 switch (state.cameraMode) {
                     case 'orbit': {
                         orbitCamera.attach(pose, true);
@@ -378,7 +384,7 @@ class Viewer {
         });
 
         // pick orbit camera focus point on double click
-        let picker = null;
+        let picker: Picker | null = null;
         events.on('inputEvent', async (eventName, event) => {
             switch (eventName) {
                 case 'dblclick': {

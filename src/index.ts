@@ -1,14 +1,26 @@
 import '@playcanvas/web-components';
-import { Asset, Color, Entity, EventHandler, MiniStats, Quat, ShaderChunks, Vec3 } from 'playcanvas';
+import type { AppElement, EntityElement } from '@playcanvas/web-components';
+import {
+    Asset,
+    Color,
+    Entity,
+    EventHandler,
+    MiniStats,
+    Quat,
+    ShaderChunks,
+    Vec3,
+    type TextureHandler,
+    type Texture,
+    type AppBase,
+    type CameraComponent
+} from 'playcanvas';
 import { XrControllers } from 'playcanvas/scripts/esm/xr-controllers.mjs';
 import { XrNavigation } from 'playcanvas/scripts/esm/xr-navigation.mjs';
 
-import { migrateSettings } from './data-migrations.js';
-import { observe } from './observe.js';
-import { Viewer } from './viewer.js';
+import { migrateSettings } from './data-migrations';
+import { observe } from './observe';
+import { Viewer } from './viewer';
 
-/** @import { AppElement, EntityElement } from '@playcanvas/web-components' */
-/** @import { Texture } from 'playcanvas' */
 
 // override global pick to pack depth instead of meshInstance id
 const pickDepthGlsl = /* glsl */ `
@@ -39,11 +51,11 @@ const v = new Vec3();
 const params = window.sse?.params ?? {};
 
 // displays a blurry poster image which resolves to sharp during loading
-const initPoster = (events) => {
+const initPoster = (events: EventHandler) => {
     const element = document.getElementById('poster');
-    const blur = progress => `blur(${Math.floor((100 - progress) * 0.4)}px)`;
+    const blur = (progress: number) => `blur(${Math.floor((100 - progress) * 0.4)}px)`;
 
-    events.on('progress:changed', (progress) => {
+    events.on('progress:changed', (progress: number) => {
         element.style.filter = blur(progress);
     });
 
@@ -53,7 +65,7 @@ const initPoster = (events) => {
 };
 
 // On entering/exiting AR, we need to set the camera clear color to transparent black
-const initXr = (app, cameraElement, state, events) => {
+const initXr = (app: AppBase, cameraElement: EntityElement, state: any, events: EventHandler) => {
 
     // initialize ar/vr
     app.xr.on('available:immersive-ar', (available) => {
@@ -63,7 +75,7 @@ const initXr = (app, cameraElement, state, events) => {
         state.hasVR = available;
     });
 
-    const parent = cameraElement.parentElement.entity;
+    const parent = (cameraElement.parentElement as EntityElement).entity;
     const camera = cameraElement.entity;
     const clearColor = new Color();
 
@@ -112,11 +124,11 @@ const initXr = (app, cameraElement, state, events) => {
     });
 
     events.on('startAR', () => {
-        app.xr.start(app.root.findComponent('camera'), 'immersive-ar', 'local-floor');
+        app.xr.start(app.root.findComponent('camera') as CameraComponent, 'immersive-ar', 'local-floor');
     });
 
     events.on('startVR', () => {
-        app.xr.start(app.root.findComponent('camera'), 'immersive-vr', 'local-floor');
+        app.xr.start(app.root.findComponent('camera') as CameraComponent, 'immersive-vr', 'local-floor');
     });
 
     events.on('inputEvent', (event) => {
@@ -126,7 +138,7 @@ const initXr = (app, cameraElement, state, events) => {
     });
 };
 
-const loadContent = (app) => {
+const loadContent = (app: AppBase) => {
     const { contentUrl, contents } = window.sse;
 
     const filename = new URL(contentUrl, location.href).pathname.split('/').pop();
@@ -152,7 +164,7 @@ const loadContent = (app) => {
     app.assets.load(asset);
 };
 
-const waitForGsplat = (app, state) => {
+const waitForGsplat = (app: AppBase, state: any) => {
     return new Promise((resolve) => {
         const assets = app.assets.filter(asset => asset.type === 'gsplat');
         if (assets.length > 0) {
@@ -180,12 +192,12 @@ const waitForGsplat = (app, state) => {
 };
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const appElement = /** @type {AppElement} */ (document.querySelector('pc-app'));
+    const appElement: AppElement = document.querySelector('pc-app');
     const app = (await appElement.ready()).app;
     const { graphicsDevice } = app;
 
     // enable anonymous CORS for image loading in safari
-    app.loader.getHandler('texture').imgParser.crossOrigin = 'anonymous';
+    (app.loader.getHandler('texture') as TextureHandler).imgParser.crossOrigin = 'anonymous';
 
     // render skybox as plain equirect
     const glsl = ShaderChunks.get(graphicsDevice, 'glsl');
@@ -198,7 +210,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     loadContent(app);
 
-    const cameraElement = await /** @type {EntityElement} */ (document.querySelector('pc-entity[name="camera"]')).ready();
+    const cameraElement = await (document.querySelector('pc-entity[name="camera"]') as EntityElement).ready();
     const camera = cameraElement.entity;
     const settings = migrateSettings(await window.sse?.settings);
     const events = new EventHandler();
@@ -236,7 +248,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
 
         skyAsset.on('load', () => {
-            app.scene.envAtlas = /** @type {Texture} */ (skyAsset.resource);
+            app.scene.envAtlas = skyAsset.resource as Texture;
         });
 
         app.assets.add(skyAsset);
@@ -276,10 +288,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         'reset', 'frame',
         'loadingText', 'loadingBar',
         'joystickBase', 'joystick'
-    ].reduce((acc, id) => {
+    ].reduce((acc: Record<string, HTMLElement>, id) => {
         acc[id] = document.getElementById(id);
         return acc;
-    }, /** @type {Record<string, HTMLElement>} */ ({}));
+    }, {});
 
     // Handle loading progress updates
     events.on('progress:changed', (progress) => {
@@ -372,7 +384,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     vrChanged();
 
     // Info panel
-    const updateInfoTab = (tab) => {
+    const updateInfoTab = (tab: 'desktop' | 'touch') => {
         if (tab === 'desktop') {
             dom.desktopTab.classList.add('active');
             dom.touchTab.classList.remove('active');
@@ -424,7 +436,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // show the ui and start a timer to hide it again
-    let uiTimeout = null;
+    let uiTimeout: ReturnType<typeof setTimeout> | null = null;
     const showUI = () => {
         if (uiTimeout) {
             clearTimeout(uiTimeout);
@@ -489,7 +501,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         events.on('animationTime:changed', updateSlider);
         events.on('animationLength:changed', updateSlider);
 
-        const handleScrub = (event) => {
+        const handleScrub = (event: PointerEvent) => {
             const rect = dom.timelineContainer.getBoundingClientRect();
             const t = Math.max(0, Math.min(rect.width - 1, event.clientX - rect.left)) / rect.width;
             events.fire('setAnimationTime', state.animationDuration * t);
@@ -498,7 +510,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         let paused = false;
         let captured = false;
 
-        dom.timelineContainer.addEventListener('pointerdown', (event) => {
+        dom.timelineContainer.addEventListener('pointerdown', (event: PointerEvent) => {
             if (!captured) {
                 handleScrub(event);
                 dom.timelineContainer.setPointerCapture(event.pointerId);
@@ -509,7 +521,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
 
-        dom.timelineContainer.addEventListener('pointermove', (event) => {
+        dom.timelineContainer.addEventListener('pointermove', (event: PointerEvent) => {
             if (captured) {
                 handleScrub(event);
             }
@@ -616,12 +628,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // update input mode based on pointer event
     ['pointerdown', 'pointermove'].forEach((eventName) => {
-        window.addEventListener(eventName, (/** @type {PointerEvent} */ event) => {
+        window.addEventListener(eventName, (event: PointerEvent) => {
             state.inputMode = event.pointerType === 'touch' ? 'touch' : 'desktop';
         });
     });
 
-    window.addEventListener('keydown', (event) => {
+    window.addEventListener('keydown', (event: KeyboardEvent) => {
         if (event.key === 'Escape') {
             events.fire('inputEvent', 'cancel', event);
         } else if (!event.ctrlKey && !event.altKey && !event.metaKey) {

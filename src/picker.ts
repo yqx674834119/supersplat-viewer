@@ -1,4 +1,4 @@
-import { Picker as PickerPC, Vec3, Vec4 } from 'playcanvas';
+import { type AppBase, type Entity, Picker as Picker_, Vec3, Vec4 } from 'playcanvas';
 
 const float32 = new Float32Array(1);
 const uint8 = new Uint8Array(float32.buffer);
@@ -6,13 +6,19 @@ const two = new Vec4(2, 2, 2, 1);
 const one = new Vec4(1, 1, 1, 0);
 
 class Picker {
-    constructor(app, camera) {
+    app: AppBase;
+
+    camera: Entity;
+
+    picker: Picker_;
+
+    constructor(app: AppBase, camera: Entity) {
         this.app = app;
         this.camera = camera;
         this.picker = null;
     }
 
-    async pick(x, y) {
+    async pick(x: number, y: number) {
         const { app, camera } = this;
         const { graphicsDevice } = app;
         const { canvas } = graphicsDevice;
@@ -23,7 +29,7 @@ class Picker {
 
         // construct picker on demand
         if (!this.picker) {
-            this.picker = new PickerPC(this.app, width, height);
+            this.picker = new Picker_(this.app, width, height);
         }
 
         // render scene, read depth
