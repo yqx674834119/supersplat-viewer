@@ -36,9 +36,6 @@
     "package.json",
     "README.md"
   ],
-  "publishConfig": {
-    "access": "public"
-  },
   "devDependencies": {
     "@playcanvas/eslint-config": "^2.1.0",
     "@playcanvas/web-components": "^0.2.7",
