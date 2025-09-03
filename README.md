@@ -117,9 +117,9 @@ type ExperienceSettings = {
 }
 ```
 
-[npm-version-badge]: https://img.shields.io/npm/v/@playcanvas/supersplat-viewer.svg
+[npm-version-badge]: https://img.shields.io/npm/v/@playcanvas/supersplat-viewer
 [npm-downloads-badge]: https://img.shields.io/npm/dw/@playcanvas/supersplat-viewer
-[license-badge]: https://img.shields.io/npm/l/@playcanvas/supersplat-viewer.svg
+[license-badge]: https://img.shields.io/npm/l/@playcanvas/supersplat-viewer
 [build-status-badge]: https://github.com/playcanvas/supersplat-viewer/actions/workflows/ci.yml/badge.svg
 [issue-resolve-badge]: https://isitmaintained.com/badge/resolution/playcanvas/supersplat-viewer.svg
 [open-issues-badge]: https://isitmaintained.com/badge/open/playcanvas/supersplat-viewer.svg
